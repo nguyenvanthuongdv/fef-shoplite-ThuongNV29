@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — DarkStore</title>
+  <meta name="description" content="Create your DarkStore account or get in touch with us.">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/pages/register.css">
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <span class="brand-icon">🛍</span>
+        DarkStore
+      </a>
+
+      <button class="navbar-toggle" id="navbar-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="navbar-links" id="navbar-links">
+        <a href="index.html">🏠 Home</a>
+        <a href="cart.html" class="cart-link">
+          🛒 Cart
+          <span class="cart-badge hidden" id="cart-badge">0</span>
+        </a>
+        <a href="register.html" class="active">📝 Register</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="page-content">
+    <div class="container">
+      <div class="register-layout">
+
+        <!-- Register Form -->
+        <div class="register-card" id="register-card">
+          <h2>Create Account</h2>
+          <p class="subtitle">Fill in your details to get started with DarkStore.</p>
+
+          <form id="register-form" novalidate>
+            <!-- Full Name -->
+            <div class="form-group">
+              <label for="fullname">Full Name <span class="required">*</span></label>
+              <input type="text" id="fullname" name="fullname" placeholder="John Doe" required>
+              <span class="form-error"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label for="email">Email Address <span class="required">*</span></label>
+              <input type="email" id="email" name="email" placeholder="john@example.com" required>
+              <span class="form-error"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label for="password">Password <span class="required">*</span></label>
+              <div class="password-wrapper">
+                <input type="password" id="password" name="password" placeholder="Min. 6 characters" required>
+                <button type="button" class="password-toggle" id="password-toggle" title="Toggle password visibility">👁</button>
+              </div>
+              <span class="form-error"></span>
+              <span class="form-hint">Must be at least 6 characters.</span>
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+              <label for="phone">Phone Number <span class="required">*</span></label>
+              <input type="tel" id="phone" name="phone" placeholder="+84 123 456 789" required>
+              <span class="form-error"></span>
+            </div>
+
+            <!-- Subject Dropdown -->
+            <div class="form-group">
+              <label for="subject">I'm interested in <span class="required">*</span></label>
+              <select id="subject" name="subject" required>
+                <option value="">Select an option...</option>
+                <option value="shopping">Shopping for myself</option>
+                <option value="gifting">Buying gifts</option>
+                <option value="business">Business / wholesale</option>
+                <option value="other">Other</option>
+              </select>
+              <span class="form-error"></span>
+            </div>
+
+            <!-- Message (optional) -->
+            <div class="form-group">
+              <label for="message">Message <span style="color: var(--text-muted); font-weight: 400;">(optional)</span></label>
+              <textarea id="message" name="message" placeholder="Tell us anything..."></textarea>
+            </div>
+
+            <!-- Terms Checkbox -->
+            <div class="form-group">
+              <label class="form-checkbox">
+                <input type="checkbox" id="terms" name="terms">
+                <span>I agree to the <a href="#" onclick="return false;">Terms & Conditions</a> and <a href="#" onclick="return false;">Privacy Policy</a></span>
+              </label>
+              <span class="form-error"></span>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn btn-primary btn-submit">📝 Create Account</button>
+          </form>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="success-message">
+          <div class="success-icon">✓</div>
+          <h3>Registration Successful!</h3>
+          <p>Your account has been created. Welcome to DarkStore!</p>
+          <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="index.html" class="btn btn-primary">🏠 Start Shopping</a>
+            <button class="btn btn-secondary" id="reset-form-btn">↩ Register Again</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 DarkStore. Built with ❤️ using Fake Store API.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/cart.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/pages/register.js"></script>
+
+</body>
+</html>
