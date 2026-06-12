@@ -1,40 +1,21 @@
-/* ============================================
-   HOME PAGE JS — Product List
-   ============================================ */
+/* Home Page — Product List */
 
-// State
 let allProducts = [];
 let filteredProducts = [];
 let currentPage = 1;
-const ITEMS_PER_PAGE = 8;
+const PER_PAGE = 8;
 
-// DOM elements
 const productGrid = document.getElementById('product-grid');
 const searchInput = document.getElementById('search-input');
 const categorySelect = document.getElementById('category-select');
 const sortSelect = document.getElementById('sort-select');
-const paginationContainer = document.getElementById('pagination');
+const pagination = document.getElementById('pagination');
 const resultsCount = document.getElementById('results-count');
-const loadingSpinner = document.getElementById('loading-spinner');
+const spinner = document.getElementById('loading-spinner');
 
-/**
- * Generate star rating HTML
- */
-function renderStars(rate) {
-  const full = Math.floor(rate);
-  const half = rate % 1 >= 0.5 ? 1 : 0;
-  const empty = 5 - full - half;
-  return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
-}
-
-/**
- * Render a single product card
- */
-function createProductCard(product, index) {
+function createProductCard(product) {
   const card = document.createElement('div');
   card.className = 'product-card';
-  card.style.animationDelay = `${index * 0.05}s`;
-
   card.innerHTML = `
     <a href="product.html?id=${product.id}" class="product-card-image">
       <img src="${product.image}" alt="${product.title}" loading="lazy">
@@ -45,197 +26,131 @@ function createProductCard(product, index) {
         <a href="product.html?id=${product.id}">${product.title}</a>
       </h3>
       <div class="product-card-rating">
-        <span class="stars">${renderStars(product.rating.rate)}</span>
-        <span>${product.rating.rate}</span>
+        <span class="stars">${product.rating.rate}/5</span>
         <span>(${product.rating.count})</span>
       </div>
     </div>
     <div class="product-card-footer">
-      <span class="product-card-price">${product.price.toFixed(2)}</span>
+      <span class="product-card-price">$${product.price.toFixed(2)}</span>
       <div class="product-card-actions">
-        <button class="btn btn-primary btn-sm" onclick="handleAddToCart(${product.id})" title="Add to cart">
-          🛒 Add
-        </button>
-        <a href="product.html?id=${product.id}" class="btn btn-secondary btn-sm" title="View details">
-          👁 View
-        </a>
+        <button class="btn btn-primary btn-sm" onclick="handleAddToCart(${product.id})">Add</button>
+        <a href="product.html?id=${product.id}" class="btn btn-secondary btn-sm">View</a>
       </div>
     </div>
   `;
-
   return card;
 }
 
-/**
- * Render products to the grid
- */
 function renderProducts() {
   productGrid.innerHTML = '';
+  const start = (currentPage - 1) * PER_PAGE;
+  const end = start + PER_PAGE;
+  const page = filteredProducts.slice(start, end);
 
-  const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  const end = start + ITEMS_PER_PAGE;
-  const pageProducts = filteredProducts.slice(start, end);
-
-  if (pageProducts.length === 0) {
-    productGrid.innerHTML = `
-      <div class="empty-state" style="grid-column: 1 / -1;">
-        <div class="empty-icon">🔍</div>
-        <p>No products found matching your criteria.</p>
-      </div>
-    `;
-    paginationContainer.innerHTML = '';
+  if (page.length === 0) {
+    productGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><p>No products found.</p></div>';
+    pagination.innerHTML = '';
     resultsCount.textContent = '';
     return;
   }
 
-  pageProducts.forEach((product, index) => {
-    productGrid.appendChild(createProductCard(product, index));
-  });
-
-  resultsCount.textContent = `Showing ${start + 1}–${Math.min(end, filteredProducts.length)} of ${filteredProducts.length} products`;
+  page.forEach(p => productGrid.appendChild(createProductCard(p)));
+  resultsCount.textContent = `Showing ${start + 1}–${Math.min(end, filteredProducts.length)} of ${filteredProducts.length}`;
   renderPagination();
 }
 
-/**
- * Render pagination buttons
- */
 function renderPagination() {
-  paginationContainer.innerHTML = '';
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  pagination.innerHTML = '';
+  const total = Math.ceil(filteredProducts.length / PER_PAGE);
+  if (total <= 1) return;
 
-  if (totalPages <= 1) return;
+  const prev = document.createElement('button');
+  prev.textContent = '‹';
+  prev.disabled = currentPage === 1;
+  prev.onclick = () => { currentPage--; renderProducts(); };
+  pagination.appendChild(prev);
 
-  // Prev button
-  const prevBtn = document.createElement('button');
-  prevBtn.textContent = '‹';
-  prevBtn.disabled = currentPage === 1;
-  prevBtn.addEventListener('click', () => { currentPage--; renderProducts(); scrollToProducts(); });
-  paginationContainer.appendChild(prevBtn);
-
-  // Page buttons
-  for (let i = 1; i <= totalPages; i++) {
+  for (let i = 1; i <= total; i++) {
     const btn = document.createElement('button');
     btn.textContent = i;
     btn.className = i === currentPage ? 'active' : '';
-    btn.addEventListener('click', () => { currentPage = i; renderProducts(); scrollToProducts(); });
-    paginationContainer.appendChild(btn);
+    btn.onclick = () => { currentPage = i; renderProducts(); };
+    pagination.appendChild(btn);
   }
 
-  // Next button
-  const nextBtn = document.createElement('button');
-  nextBtn.textContent = '›';
-  nextBtn.disabled = currentPage === totalPages;
-  nextBtn.addEventListener('click', () => { currentPage++; renderProducts(); scrollToProducts(); });
-  paginationContainer.appendChild(nextBtn);
+  const next = document.createElement('button');
+  next.textContent = '›';
+  next.disabled = currentPage === total;
+  next.onclick = () => { currentPage++; renderProducts(); };
+  pagination.appendChild(next);
 }
 
-function scrollToProducts() {
-  document.querySelector('.controls-bar')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-/**
- * Apply search, filter, and sort to products
- */
 function applyFilters() {
-  const searchTerm = searchInput.value.toLowerCase().trim();
-  const category = categorySelect.value;
+  const search = searchInput.value.toLowerCase().trim();
+  const cat = categorySelect.value;
   const sort = sortSelect.value;
 
-  filteredProducts = allProducts.filter(product => {
-    const matchSearch = !searchTerm || product.title.toLowerCase().includes(searchTerm);
-    const matchCategory = !category || product.category === category;
-    return matchSearch && matchCategory;
+  filteredProducts = allProducts.filter(p => {
+    const matchSearch = !search || p.title.toLowerCase().includes(search);
+    const matchCat = !cat || p.category === cat;
+    return matchSearch && matchCat;
   });
 
-  // Sort
-  switch (sort) {
-    case 'price-asc':
-      filteredProducts.sort((a, b) => a.price - b.price);
-      break;
-    case 'price-desc':
-      filteredProducts.sort((a, b) => b.price - a.price);
-      break;
-    case 'name-asc':
-      filteredProducts.sort((a, b) => a.title.localeCompare(b.title));
-      break;
-    case 'name-desc':
-      filteredProducts.sort((a, b) => b.title.localeCompare(a.title));
-      break;
-    case 'rating':
-      filteredProducts.sort((a, b) => b.rating.rate - a.rating.rate);
-      break;
-  }
+  if (sort === 'price-asc') filteredProducts.sort((a, b) => a.price - b.price);
+  else if (sort === 'price-desc') filteredProducts.sort((a, b) => b.price - a.price);
+  else if (sort === 'name-asc') filteredProducts.sort((a, b) => a.title.localeCompare(b.title));
+  else if (sort === 'name-desc') filteredProducts.sort((a, b) => b.title.localeCompare(a.title));
+  else if (sort === 'rating') filteredProducts.sort((a, b) => b.rating.rate - a.rating.rate);
 
   currentPage = 1;
   renderProducts();
 }
 
-/**
- * Handle "Add to Cart" click
- */
-function handleAddToCart(productId) {
-  const product = allProducts.find(p => p.id === productId);
+function handleAddToCart(id) {
+  const product = allProducts.find(p => p.id === id);
   if (product) {
     addToCart(product);
-    showToast(`"${product.title.substring(0, 30)}..." added to cart!`, 'success');
+    showToast(`"${product.title}" added to cart!`);
   }
 }
 
-/**
- * Populate category dropdown
- */
 async function loadCategories() {
   try {
-    const categories = await getCategories();
-    categories.forEach(cat => {
-      const option = document.createElement('option');
-      option.value = cat;
-      option.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-      categorySelect.appendChild(option);
+    const cats = await getCategories();
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c.charAt(0).toUpperCase() + c.slice(1);
+      categorySelect.appendChild(opt);
     });
-  } catch (err) {
-    console.error('Failed to load categories:', err);
+  } catch (e) {
+    console.error('Failed to load categories:', e);
   }
 }
 
-/**
- * Initialize the home page
- */
-async function initHomePage() {
+async function initHome() {
   try {
-    loadingSpinner.style.display = 'flex';
+    spinner.style.display = 'flex';
     productGrid.style.display = 'none';
 
-    const [products] = await Promise.all([
-      getAllProducts(),
-      loadCategories(),
-    ]);
-
+    const [products] = await Promise.all([getAllProducts(), loadCategories()]);
     allProducts = products;
     filteredProducts = [...allProducts];
 
-    loadingSpinner.style.display = 'none';
+    spinner.style.display = 'none';
     productGrid.style.display = 'grid';
-
     renderProducts();
-  } catch (err) {
-    loadingSpinner.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">⚠️</div>
-        <p>Failed to load products. Please try again.</p>
-        <button class="btn btn-primary" onclick="initHomePage()" style="margin-top: 1rem;">Retry</button>
-      </div>
-    `;
-    console.error('Init error:', err);
+  } catch (e) {
+    spinner.innerHTML = '<div class="empty-state"><p>Failed to load products.</p><button class="btn btn-primary" onclick="initHome()" style="margin-top:1rem;">Retry</button></div>';
+    console.error(e);
   }
 }
 
-// --- Event Listeners ---
 document.addEventListener('DOMContentLoaded', () => {
   if (searchInput) {
     searchInput.addEventListener('input', applyFilters);
     categorySelect.addEventListener('change', applyFilters);
     sortSelect.addEventListener('change', applyFilters);
-    initHomePage();
+    initHome();
   }
 });

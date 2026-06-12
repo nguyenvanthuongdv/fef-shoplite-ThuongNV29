@@ -4,48 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Detail — Shopelite</title>
-  <meta name="description" content="View product details, ratings, and add to your cart.">
-
-  <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/navbar.css">
-  <link rel="stylesheet" href="css/pages/product.css">
 </head>
 <body>
 
-  <!-- ===== NAVBAR ===== -->
-  <nav class="navbar" id="main-navbar">
+  <!-- Navbar -->
+  <nav class="navbar">
     <div class="container">
-      <a href="index.html" class="navbar-brand">
-        <span class="brand-icon">🛍</span>
-        Shopelite
-      </a>
-
-      <button class="navbar-toggle" id="navbar-toggle" aria-label="Toggle navigation">
-        <span></span>
-        <span></span>
-        <span></span>
+      <a href="index.html" class="navbar-brand">Shopelite</a>
+      <button class="navbar-toggle" id="navbar-toggle">
+        <span></span><span></span><span></span>
       </button>
-
       <div class="navbar-links" id="navbar-links">
-        <a href="index.html">🏠 Home</a>
+        <a href="index.html">Home</a>
         <a href="cart.html" class="cart-link">
-          🛒 Cart
-          <span class="cart-badge hidden" id="cart-badge">0</span>
+          Cart <span class="cart-badge hidden" id="cart-badge">0</span>
         </a>
-        <a href="register.html">📝 Register</a>
+        <a href="register.html">Register</a>
       </div>
     </div>
   </nav>
 
-  <!-- ===== MAIN CONTENT ===== -->
+  <!-- Main -->
   <main class="page-content">
     <div class="container">
 
       <!-- Breadcrumb -->
       <nav class="breadcrumb">
         <a href="index.html">Home</a>
-        <span class="separator">›</span>
+        <span>›</span>
         <span class="current" id="breadcrumb-title">Product Detail</span>
       </nav>
 
@@ -60,18 +47,15 @@
     </div>
   </main>
 
-  <!-- ===== FOOTER ===== -->
   <footer class="site-footer">
     <div class="container">
-      <p>© 2026 Shopelite. Built with ❤️ using Fake Store API.</p>
+      <p>&copy; 2026 Shopelite. Built with Fake Store API.</p>
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script src="js/api.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/navbar.js"></script>
   <script src="js/pages/product.js"></script>
-
 </body>
 </html>

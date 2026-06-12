@@ -1,135 +1,73 @@
-/* ============================================
-   REGISTER / CONTACT PAGE JS — Form Validation
-   ============================================ */
+/* Register Page — Form Validation */
 
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('register-form');
-  const successMessage = document.getElementById('success-message');
+  const successMsg = document.getElementById('success-message');
   const registerCard = document.getElementById('register-card');
-  const passwordToggle = document.getElementById('password-toggle');
-  const passwordInput = document.getElementById('password');
 
   if (!form) return;
 
-  // --- Password Toggle ---
-  if (passwordToggle && passwordInput) {
-    passwordToggle.addEventListener('click', () => {
-      const isPassword = passwordInput.type === 'password';
-      passwordInput.type = isPassword ? 'text' : 'password';
-      passwordToggle.textContent = isPassword ? '🙈' : '👁';
-    });
-  }
-
-  // --- Real-time Validation ---
-  const fields = form.querySelectorAll('input, select, textarea');
-  fields.forEach(field => {
-    field.addEventListener('blur', () => validateField(field));
-    field.addEventListener('input', () => {
-      const group = field.closest('.form-group');
-      if (group && group.classList.contains('error')) {
-        validateField(field);
-      }
-    });
-  });
-
-  // --- Form Submit ---
   form.addEventListener('submit', (e) => {
     e.preventDefault();
+    let valid = true;
 
-    let isValid = true;
-
-    fields.forEach(field => {
-      if (!validateField(field)) {
-        isValid = false;
-      }
+    // Validate all fields
+    form.querySelectorAll('input, select').forEach(field => {
+      if (!validateField(field)) valid = false;
     });
 
-    // Checkbox validation
-    const termsCheckbox = document.getElementById('terms');
-    if (termsCheckbox && !termsCheckbox.checked) {
-      const group = termsCheckbox.closest('.form-group');
-      if (group) {
-        group.classList.add('error');
-        const errorEl = group.querySelector('.form-error');
-        if (errorEl) {
-          errorEl.textContent = '⚠ You must agree to the Terms & Conditions.';
-          errorEl.style.display = 'flex';
-        }
-      }
-      isValid = false;
+    // Validate terms checkbox
+    const terms = document.getElementById('terms');
+    if (terms && !terms.checked) {
+      setError(terms, 'You must agree to the Terms.');
+      valid = false;
     }
 
-    if (isValid) {
-      // Success! Show message
+    if (valid) {
       registerCard.style.display = 'none';
-      successMessage.classList.add('show');
-      showToast('Registration successful!', 'success');
+      successMsg.classList.add('show');
     }
   });
 
-  /**
-   * Validate a single field
-   */
   function validateField(field) {
-    const group = field.closest('.form-group');
-    if (!group) return true;
-
-    const errorEl = group.querySelector('.form-error');
     const name = field.name || field.id;
-    const value = field.value.trim();
-
+    const val = field.value.trim();
     let error = '';
 
-    // Required check
-    if (field.hasAttribute('required') && !value) {
+    if (field.hasAttribute('required') && !val) {
       error = 'This field is required.';
+    } else if (val) {
+      if (name === 'fullname' && val.length < 2) error = 'Name must be at least 2 characters.';
+      if (name === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) error = 'Invalid email.';
+      if (name === 'password' && val.length < 6) error = 'Password must be at least 6 characters.';
+      if (name === 'phone' && !/^[\d\s\-+()]{8,15}$/.test(val)) error = 'Invalid phone number.';
+      if (name === 'subject' && !val) error = 'Please select an option.';
     }
 
-    // Specific validations
-    if (!error && value) {
-      switch (name) {
-        case 'fullname':
-          if (value.length < 2) error = 'Name must be at least 2 characters.';
-          break;
+    const group = field.closest('.form-group');
+    const errEl = group?.querySelector('.form-error');
 
-        case 'email':
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value)) error = 'Please enter a valid email address.';
-          break;
-
-        case 'password':
-          if (value.length < 6) error = 'Password must be at least 6 characters.';
-          break;
-
-        case 'phone':
-          const phoneRegex = /^[\d\s\-+()]{8,15}$/;
-          if (!phoneRegex.test(value)) error = 'Please enter a valid phone number.';
-          break;
-
-        case 'subject':
-          if (!value) error = 'Please select an option.';
-          break;
-      }
-    }
-
-    // Apply state
     if (error) {
-      group.classList.add('error');
-      group.classList.remove('success');
-      if (errorEl) {
-        errorEl.textContent = `⚠ ${error}`;
-        errorEl.style.display = 'flex';
-      }
+      group?.classList.add('error');
+      group?.classList.remove('success');
+      if (errEl) { errEl.textContent = error; errEl.style.display = 'block'; }
       return false;
     } else {
-      group.classList.remove('error');
-      if (value) group.classList.add('success');
-      if (errorEl) errorEl.style.display = 'none';
+      group?.classList.remove('error');
+      if (val) group?.classList.add('success');
+      if (errEl) errEl.style.display = 'none';
       return true;
     }
   }
 
-  // --- "Register Again" button ---
+  function setError(field, msg) {
+    const group = field.closest('.form-group');
+    group?.classList.add('error');
+    const errEl = group?.querySelector('.form-error');
+    if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+  }
+
+  // Reset button
   const resetBtn = document.getElementById('reset-form-btn');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
@@ -139,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const err = g.querySelector('.form-error');
         if (err) err.style.display = 'none';
       });
-      successMessage.classList.remove('show');
+      successMsg.classList.remove('show');
       registerCard.style.display = 'block';
     });
   }
