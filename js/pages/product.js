@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const product = await getProductById(id);
 
-      document.title = `${product.title} — DarkStore`;
+      document.title = `${product.title} — Shopelite`;
 
       // Update breadcrumb
       const breadcrumbTitle = document.getElementById('breadcrumb-title');
