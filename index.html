@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DarkStore — Premium E-commerce</title>
+  <meta name="description" content="Browse our curated collection of premium products. Find electronics, jewelry, clothing and more at DarkStore.">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="css/pages/home.css">
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <span class="brand-icon">🛍</span>
+        DarkStore
+      </a>
+
+      <button class="navbar-toggle" id="navbar-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="navbar-links" id="navbar-links">
+        <a href="index.html" class="active">🏠 Home</a>
+        <a href="cart.html" class="cart-link">
+          🛒 Cart
+          <span class="cart-badge hidden" id="cart-badge">0</span>
+        </a>
+        <a href="register.html">📝 Register</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="page-content">
+    <div class="container">
+
+      <!-- Hero -->
+      <section class="hero">
+        <h1 class="hero-title">Discover <span>Premium</span> Products</h1>
+        <p class="hero-subtitle">Browse our curated collection of high-quality items at unbeatable prices.</p>
+      </section>
+
+      <!-- Controls Bar -->
+      <div class="controls-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search products..." autocomplete="off">
+        </div>
+        <div class="filter-group">
+          <select id="category-select">
+            <option value="">All Categories</option>
+          </select>
+          <select id="sort-select">
+            <option value="">Sort by</option>
+            <option value="price-asc">Price: Low → High</option>
+            <option value="price-desc">Price: High → Low</option>
+            <option value="name-asc">Name: A → Z</option>
+            <option value="name-desc">Name: Z → A</option>
+            <option value="rating">Top Rated</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="spinner-overlay" id="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="product-grid" id="product-grid"></div>
+
+      <!-- Results Count -->
+      <p class="results-count" id="results-count"></p>
+
+      <!-- Pagination -->
+      <div class="pagination" id="pagination"></div>
+
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 DarkStore. Built with ❤️ using Fake Store API.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/pages/home.js"></script>
+
+</body>
+</html>
